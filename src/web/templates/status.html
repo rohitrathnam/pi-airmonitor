@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+   <h3>Current Settings</h3>
+   <body>
+      <table border = 1>
+         <thead>
+            <td>State</td>
+            <td>Heater Voltage</td>
+            <td>Sensor Voltage</td>
+         </thead>
+         
+          <tr>
+               <td>{{rows[1]}}</td>
+               <td> {{rows[2]}}</td>
+               <td>{{rows[3]}}</td>	
+          </tr>
+      </table>
+      <br>
+      <a href = {{ url_for('settings') }}>Settings</a>
+   </body>
+</html>
