@@ -113,10 +113,10 @@ try:
 	while True:
 		[raw_adc, sensor_cur] = read_adc()
 		[temp, hum] = read_bme()
-		if(raw_adc>3 and mux>0):
+		if(raw_adc>3.1 and mux>0):
 			mux = mux-1
 			set_mux(mux)
-		elif(raw_adc<0.5 and mux<3):
+		elif(raw_adc<1 and mux<3):
 			mux = mux+1
 			set_mux(mux)
 		print(raw_adc, sensor_cur, mux, temp, hum)
