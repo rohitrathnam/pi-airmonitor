@@ -88,6 +88,7 @@ def read_bme():
 def log_db(co2, temp, hum):
 	with sql.connect("web/values.db") as con:
 		cur = con.cursor()
+		cursor.execute('''CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP, co2 REAL, temp REAL, hum REAL)''')
 		cur.execute("INSERT INTO sensor (co2, temp, hum) VALUES (?,?,?)", (co2,temp,hum))
 		con.commit()
 
