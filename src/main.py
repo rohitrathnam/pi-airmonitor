@@ -6,6 +6,9 @@ from statistics import mean
 import sqlite3 as sql
 import pigpio
 
+MUX0 = 5
+MUX1 = 6
+
 pi = pigpio.pi()
 
 gain = 3.2
@@ -94,17 +97,17 @@ def log_db(co2, temp, hum):
 
 def set_mux(config):
 	if config==0:
-		pi.write(5,0)
-		pi.write(6,0)
+		pi.write(MUX0,0)
+		pi.write(MUX1,0)
 	elif config==1:
-		pi.write(5,1)
-		pi.write(6,0)
+		pi.write(MUX0,1)
+		pi.write(MUX1,0)
 	elif config==2:
-		pi.write(5,0)
-		pi.write(6,1)
+		pi.write(MUX0,0)
+		pi.write(MUX1,1)
 	elif config==3:
-		pi.write(5,1)
-		pi.write(6,1)
+		pi.write(MUX0,1)
+		pi.write(MUX1,1)
 
 set_mux(mux)
 set_sv(4.3)
