@@ -16,6 +16,7 @@ cd deps
 pip3 install numpy-1.16.4-cp35-cp35m-linux_armv7l.whl
 pip3 install pandas-0.24.1-cp35-cp35m-linux_armv7l.whl
 pip3 install flask
+pip3 install Adafruit_PureIO
 
 echo "Setup successful"
 echo "Run src/main.py to log the data in src/web/values.db"
