@@ -7,6 +7,7 @@ import sqlite3 as sql
 import pigpio
 import adxl345
 import honeywell_hpma115s0 as pmsensor
+import ads1115
 
 MUX0 = 5
 MUX1 = 6
@@ -28,6 +29,7 @@ sv = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
 bme = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 pm = pmsensor.Honeywell()
 adxl = adxl345.ADXL345()
+ads = ads1115.ADS1115()
 
 def set_sv(volt):
 	global sv
@@ -133,6 +135,9 @@ try:
 		print("pm sensor ", pm_data.pm10, pm_data.pm25)
 		acc = adxl.getAxes(True)
 		print("acc ", acc['x'], acc['y'], acc['z'])
+		ldr = ads.readADCSingleEnded()
+		ldr = int(ldr)
+		print("ldr ", ldr)
 		#log_db(sensor_cur, temp, hum)
 
 except KeyboardInterrupt:
