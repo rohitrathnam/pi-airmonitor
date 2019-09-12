@@ -5,6 +5,7 @@ import spidev
 from statistics import mean
 import sqlite3 as sql
 import pigpio
+import adxl345
 import honeywell_hpma115s0 as pmsensor
 
 MUX0 = 5
@@ -26,6 +27,7 @@ hv = Adafruit_MCP4725.MCP4725(address=0x60, busnum=1)
 sv = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
 bme = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 pm = pmsensor.Honeywell()
+adxl = adxl345.ADXL345()
 
 def set_sv(volt):
 	global sv
@@ -125,9 +127,12 @@ try:
 		elif(raw_adc<1 and mux<3):
 			mux = mux+1
 			set_mux(mux)
-		print(raw_adc, sensor_cur, mux, temp, hum)
+		print("sensor ", raw_adc, sensor_cur, mux)
+		print("bme ", temp, hum)
 		pm_data = pm.read()
-		print(pm_data.pm10, pm_data.pm25)
+		print("pm sensor ", pm_data.pm10, pm_data.pm25)
+		acc = adxl.getAxes(True)
+		print("acc ", acc['x'], acc['y'], acc['z'])
 		#log_db(sensor_cur, temp, hum)
 
 except KeyboardInterrupt:
