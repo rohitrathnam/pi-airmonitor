@@ -94,11 +94,11 @@ def read_bme():
 	humidity = round(bme.read_humidity(),2)
 	return [degrees, humidity]
 
-def log_db(co2, temp, hum):
-	with sql.connect("web/values.db") as con:
+def log_db(gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr):
+	with sql.connect("log.db") as con:
 		cur = con.cursor()
-		cur.execute("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP, co2 REAL, temp REAL, hum REAL)")
-		cur.execute("INSERT INTO sensor (co2, temp, hum) VALUES (?,?,?)", (co2,temp,hum))
+		cur.execute("CREATE TABLE IF NOT EXISTS log (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP, gas REAL, gas_raw REAL, mux INTEGER, temp REAL, hum REAL, pm25 INTEGER, pm10 INTEGER, acc_x REAL, acc_y REAL, acc_z REAL, ldr INTEGER)")
+		cur.execute("INSERT INTO log (gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr) VALUES (?,?,?,?,?,?,?,?,?,?,?)", (gas, gas_raw, mux, temp, hum, pm2.5, pm10, acc_x, acc_y, acc_z, ldr))
 		con.commit()
 
 def set_mux(config):
@@ -138,7 +138,7 @@ try:
 		ldr = ads.readADCSingleEnded()
 		ldr = int(ldr)
 		print("ldr ", ldr)
-		#log_db(sensor_cur, temp, hum)
+		log_db(sensor_cur, raw_adc, mux, temp, hum, pm_data.pm25, pm_data.pm10, acc['x'], acc['y'], acc['z'], ldr)
 
 except KeyboardInterrupt:
 	print("exit")
