@@ -5,6 +5,7 @@ import spidev
 from statistics import mean
 import sqlite3 as sql
 import pigpio
+import honeywell_hpma115s0 as pmsensor
 
 MUX0 = 5
 MUX1 = 6
@@ -24,6 +25,7 @@ spi.mode = 0b00
 hv = Adafruit_MCP4725.MCP4725(address=0x60, busnum=1)
 sv = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
 bme = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
+pm = pmsensor.Honeywell()
 
 def set_sv(volt):
 	global sv
@@ -124,7 +126,9 @@ try:
 			mux = mux+1
 			set_mux(mux)
 		print(raw_adc, sensor_cur, mux, temp, hum)
-		log_db(sensor_cur, temp, hum)
+		pm_data = pm.read()
+		print(pm_data.pm10, pm_data.pm25)
+		#log_db(sensor_cur, temp, hum)
 
 except KeyboardInterrupt:
 	print("exit")
