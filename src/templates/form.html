@@ -1,0 +1,19 @@
+<html>
+   <body>
+      <form action = "{{ url_for('change') }}" method = "POST">
+         <h3>Device Settings</h3><br>
+         
+         Status<br>
+         <input type="radio" name="state" value="On"> On<br>
+         <input type="radio" name="state" value="Off" checked> Off<br>
+         
+         Heater Voltage<br>
+         <input type="number" name = "hv" min="0" max="10" required><br>
+         
+         Sensor Voltage<br>
+         <input type="number" name = "sv" min="0" max="10" required><br>
+         
+         <input type = "submit" value = "submit"><br>
+      </form>
+   </body>
+</html>
