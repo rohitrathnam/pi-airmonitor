@@ -8,6 +8,7 @@ import pigpio
 import adxl345
 import honeywell_hpma115s0 as pmsensor
 import ads1115
+import serial
 
 from flask import Flask, render_template, request
 app = Flask(__name__)
@@ -34,6 +35,9 @@ bme = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSA
 pm = pmsensor.Honeywell()
 adxl = adxl345.ADXL345()
 ads = ads1115.ADS1115()
+
+node1 = serial.Serial(port='/dev/rfcomm0', baudrate=9600)
+node2 = serial.Serial(port='/dev/rfcomm1', baudrate=9600)
 
 def set_sv(volt):
 	global sv
@@ -98,11 +102,11 @@ def read_bme():
 	humidity = round(bme.read_humidity(),2)
 	return [degrees, humidity]
 
-def log_db(gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr):
+def log_db(gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, n1_gas, n1_temp, n1_hum, n2_gas, n2_temp, n2_hum):
 	with sql.connect("log.db") as con:
 		cur = con.cursor()
-		cur.execute("CREATE TABLE IF NOT EXISTS log (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, gas REAL, gas_raw REAL, mux INTEGER, temp REAL, hum REAL, pm25 INTEGER, pm10 INTEGER, acc_x REAL, acc_y REAL, acc_z REAL, ldr INTEGER)")
-		cur.execute("INSERT INTO log (gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr) VALUES (?,?,?,?,?,?,?,?,?,?,?)", (gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr))
+		cur.execute("CREATE TABLE IF NOT EXISTS log (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, gas REAL, gas_raw REAL, mux INTEGER, temp REAL, hum REAL, pm25 INTEGER, pm10 INTEGER, acc_x REAL, acc_y REAL, acc_z REAL, ldr INTEGER, n1_gas REAL, n1_temp REAL, n1_hum REAL, n2_gas REAL, n2_temp REAL, n2_hum REAL)")
+		cur.execute("INSERT INTO log (gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, n1_gas, n1_temp, n1_hum, n2_gas, n2_temp, n2_hum) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, n1_gas, n1_temp, n1_hum, n2_gas, n2_temp, n2_hum))
 		con.commit()
 
 def set_mux(config):
@@ -118,6 +122,33 @@ def set_mux(config):
 	elif config==3:
 		pi.write(MUX0,1)
 		pi.write(MUX1,1)
+
+def read_node(node):
+	if node.isOpen():
+		node.close()
+	node.open()
+	node.write(b'\x64')
+	strin = node.readline()
+	node.close()
+	return strin.split(',')
+
+def set_hv_node(node, hv):
+	if node.isOpen():
+		node.close()
+	node.open()
+	node.write(b'\x62\x'+int(hv*10))
+	name = node.readline()
+	node.close()
+	print('node '+name+' '+hv)
+
+def set_sv_node(node, sv):
+	if node.isOpen():
+		node.close()
+	node.open()
+	node.write(b'\x63\x'+int(sv*10))
+	name = node.readline()
+	node.close()
+	print('node '+name+' '+sv)
 
 @app.route('/')
 def home():
@@ -168,12 +199,14 @@ def webserver():
 	app.run(host='0.0.0.0', port=80, debug=False)
 
 if __name__ == '__main__':
+	#webserver()
+	
 	web = threading.Thread(target=webserver)
 	web.daemon = True
 	web.start()
 	set_mux(mux)
 	set_sv(4.3)
-	set_hv(0)
+	set_hv(6)
 
 	try:
 		while True:
@@ -194,9 +227,11 @@ if __name__ == '__main__':
 			ldr = ads.readADCSingleEnded()
 			ldr = int(ldr)
 			print("ldr ", ldr)
+			
 			log_db(sensor_cur, raw_adc, mux, temp, hum, pm_data.pm25, pm_data.pm10, acc['x'], acc['y'], acc['z'], ldr)
 
 	except KeyboardInterrupt:
 		print("exit")
 		spi.close()
 
+	
