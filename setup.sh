@@ -19,6 +19,5 @@ pip3 install flask
 pip3 install Adafruit_PureIO
 
 echo "Setup successful"
-echo "Run src/main.py to log the data in src/web/values.db"
-echo "Run src/web/web.py to start the server"
-echo "Follow https://www.raspberrypi.org/forums/viewtopic.php?p=1007463#p1007463"
+echo "Run src/main.py to log the data in src/log.db"
+echo "Follow https://www.raspberrypi.org/forums/viewtopic.php?p=1007463#p1007463 for bluetooth problems"
