@@ -36,12 +36,12 @@ spi.mode = 0b00
 hv = MCP4725.MCP4725(address=0x60, busnum=1)
 sv = MCP4725.MCP4725(address=0x61, busnum=1)
 bme = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
-pm = pmsensor.Honeywell()
-adxl = adxl345.ADXL345()
-ads = ads1115.ADS1115()
+#pm = pmsensor.Honeywell()
+#adxl = adxl345.ADXL345()
+#ads = ads1115.ADS1115()
 
-node1 = serial.Serial(port='/dev/rfcomm0', baudrate=9600, timeout=3)
-node2 = serial.Serial(port='/dev/rfcomm1', baudrate=9600, timeout=3)
+node1 = serial.Serial(port='/dev/rfcomm0', baudrate=9600, timeout=8)
+node2 = serial.Serial(port='/dev/rfcomm1', baudrate=9600, timeout=8)
 
 def set_sv(volt):
 	global sv
@@ -62,8 +62,8 @@ def set_sv(volt):
 			sleep(0.001)
 		sv.set_voltage(val, False)
 	sval = val
-	set_sv_node(node1, volt)
-	set_sv_node(node2, volt)
+	#set_sv_node(node1, volt)
+	#set_sv_node(node2, volt)
 	print("sv set to ", volt)
 
 def set_hv(volt):
@@ -85,8 +85,8 @@ def set_hv(volt):
 			sleep(0.001)
 		hv.set_voltage(val, False)
 	hval = val
-	set_hv_node(node1, volt)
-	set_hv_node(node2, volt)
+	#set_hv_node(node1, volt)
+	#set_hv_node(node2, volt)
 	print("hv set to ", volt)
 
 def read_adc():
@@ -193,6 +193,7 @@ def webserver():
 	print("Flask init success")
 	app.run(host='0.0.0.0', port=80, debug=False)
 
+'''
 if __name__ == '__main__':
 	#webserver()
 	
@@ -206,7 +207,7 @@ if __name__ == '__main__':
 	node1.open()
 	node2.open()
 	set_mux(mux)
-	set_sv(1)
+	set_sv(4.3)
 	set_hv(5.9)
 	
 	try:
@@ -243,3 +244,4 @@ if __name__ == '__main__':
 		spi.close()
 		node1.close()
 		node2.close()
+'''
