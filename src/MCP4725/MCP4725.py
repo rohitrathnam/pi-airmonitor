@@ -2,18 +2,14 @@
 WRITEDAC         = 0x40
 WRITEDACEEPROM   = 0x60
 
-# Default I2C address:
-DEFAULT_ADDRESS  = 0x62
-
 from smbus import SMBus
-
 
 class MCP4725(object):
     """Base functionality for MCP4725 digital to analog converter."""
 
-    def __init__(self, address=DEFAULT_ADDRESS, busnum=1):
+    def __init__(self, address):
         """Create an instance of the MCP4725 DAC."""
-        self._device = SMBus(busnum)
+        self._device = SMBus(1)
         self._address = address
 
     def set_voltage(self, value, persist=False):
@@ -33,6 +29,7 @@ class MCP4725(object):
             value = 0
             
         reg_data = [(value >> 4) & 0xFF, (value << 4) & 0xFF]
+        print(reg_data)
         if persist:
             self._device.write_block_data(self._address, WRITEDACEEPROM, reg_data)
         else:
