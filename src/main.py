@@ -40,8 +40,8 @@ pm = pmsensor.Honeywell()
 adxl = adxl345.ADXL345()
 ads = ads1115.ADS1115()
 
-node1 = serial.Serial(port='/dev/rfcomm0', baudrate=9600, timeout=10)
-node2 = serial.Serial(port='/dev/rfcomm1', baudrate=9600, timeout=10)
+node1 = serial.Serial(port='/dev/rfcomm0', baudrate=9600, timeout=3)
+node2 = serial.Serial(port='/dev/rfcomm1', baudrate=9600, timeout=3)
 
 def set_sv(volt):
 	global sv
@@ -132,32 +132,32 @@ def set_mux(config):
 		pi.write(MUX1,1)
 
 def read_node(node):
-	if node.isOpen():
-		node.close()
-	node.open()
+	#if node.isOpen():
+	#	node.close()
+	#node.open()
 	node.write(b'@')
 	strin = node.readline()[0:-2].decode('utf-8')
-	node.close()
+	#node.close()
 	return strin.split(' ')
 
 def set_hv_node(node, hv):
-	if node.isOpen():
-		node.close()
-	node.open()
-	sleep(0.1)
+	#if node.isOpen():
+	#	node.close()
+	#node.open()
+	#sleep(0.1)
 	node.write(b'>'+bytes([int(hv*10)]))
 	name = node.readline()
-	node.close()
+	#node.close()
 	print('node '+str(name)+str(hv))
 
 def set_sv_node(node, sv):
-	if node.isOpen():
-		node.close()
-	node.open()
-	sleep(0.1)
+	#if node.isOpen():
+	#	node.close()
+	#node.open()
+	#sleep(0.1)
 	node.write(b'?'+bytes([int(sv*10)]))
 	name = node.readline()
-	node.close()
+	#node.close()
 	print('node '+str(name)+str(sv))
 
 @app.route('/')
@@ -196,12 +196,18 @@ def webserver():
 if __name__ == '__main__':
 	#webserver()
 	
+	if node1.isOpen():
+		node1.close()
+	if node2.isOpen():
+		node2.close()
 	web = threading.Thread(target=webserver)
 	web.daemon = True
 	web.start()
+	node1.open()
+	node2.open()
 	set_mux(mux)
-	set_sv(4.3)
-	set_hv(6)
+	set_sv(1)
+	set_hv(5.9)
 	
 	try:
 		while True:
@@ -235,3 +241,5 @@ if __name__ == '__main__':
 	except KeyboardInterrupt:
 		print("exit")
 		spi.close()
+		node1.close()
+		node2.close()
