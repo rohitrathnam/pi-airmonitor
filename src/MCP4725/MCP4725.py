@@ -31,6 +31,6 @@ class MCP4725(object):
         reg_data = [(value >> 4) & 0xFF, (value << 4) & 0xFF]
         
         if persist:
-            self._device.write_block_data(self._address, WRITEDACEEPROM, reg_data)
+            self._device.write_i2c_block_data(self._address, WRITEDACEEPROM, reg_data)
         else:
-            self._device.write_block_data(self._address, WRITEDAC, reg_data)
+            self._device.write_i2c_block_data(self._address, WRITEDAC, reg_data)

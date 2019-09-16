@@ -36,9 +36,9 @@ spi.mode = 0b00
 hv = MCP4725.MCP4725(address=0x60)
 sv = MCP4725.MCP4725(address=0x61)
 bme = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
-#pm = pmsensor.Honeywell()
-#adxl = adxl345.ADXL345()
-#ads = ads1115.ADS1115()
+pm = pmsensor.Honeywell()
+adxl = adxl345.ADXL345()
+ads = ads1115.ADS1115()
 
 node1 = serial.Serial(port='/dev/rfcomm0', baudrate=9600, timeout=8)
 node2 = serial.Serial(port='/dev/rfcomm1', baudrate=9600, timeout=8)
@@ -52,18 +52,18 @@ def set_sv(volt):
 		while i<val:
 			sv.set_voltage(i, False)
 			i = i + 1
-			sleep(0.01)
+			sleep(0.002)
 		sv.set_voltage(val, False)
 	elif val < sval:
 		i = sval
 		while i>val:
 			sv.set_voltage(i, False)
 			i = i - 1
-			sleep(0.01)
+			sleep(0.002)
 		sv.set_voltage(val, False)
 	sval = val
-	#set_sv_node(node1, volt)
-	#set_sv_node(node2, volt)
+	set_sv_node(node1, volt)
+	set_sv_node(node2, volt)
 	print("sv set to ", volt)
 
 def set_hv(volt):
@@ -75,18 +75,18 @@ def set_hv(volt):
 		while i<val:
 			hv.set_voltage(i, False)
 			i = i + 1
-			sleep(0.001)
+			sleep(0.002)
 		hv.set_voltage(val, False)
 	elif val < hval:
 		i = hval
 		while i>val:
 			hv.set_voltage(i, False)
 			i = i - 1
-			sleep(0.001)
+			sleep(0.002)
 		hv.set_voltage(val, False)
 	hval = val
-	#set_hv_node(node1, volt)
-	#set_hv_node(node2, volt)
+	set_hv_node(node1, volt)
+	set_hv_node(node2, volt)
 	print("hv set to ", volt)
 
 def read_adc():
