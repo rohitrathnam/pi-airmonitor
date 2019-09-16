@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<meta http-equiv="refresh" content="1"/>
+   <h3>Device Readings</h3>
+   <body>
+      <table border = 1>
+         <thead>
+            <td>Time</td>
+            <td>CO2</td>
+            <td>Mux</td>
+            <td>Temperature</td>
+            <td>Humidity</td>
+            <td>PM 2.5</td>
+            <td>PM 10</td>
+            <td>Acc X</td>
+            <td>Acc Y</td>
+            <td>Acc Z</td>
+            <td>Light</td>
+         </thead>
+            <tr>
+               <td>{{rows[1]}}</td>
+               <td>{{rows[2]}}</td>
+               <td>{{rows[4]}}</td>
+               <td>{{rows[5]}}</td>
+               <td>{{rows[6]}}</td>
+               <td>{{rows[7]}}</td>	
+               <td>{{rows[8]}}</td>
+               <td>{{rows[9]}}</td>
+               <td>{{rows[10]}}</td>	
+               <td>{{rows[11]}}</td>
+               <td>{{rows[12]}}</td>
+            </tr>
+      </table>
+      <br>
+      <a href = {{ url_for('settings') }}>Settings</a>
+  </body>
+</html>
