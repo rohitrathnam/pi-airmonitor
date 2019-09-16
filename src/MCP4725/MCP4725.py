@@ -2,7 +2,7 @@
 WRITEDAC         = 0x40
 WRITEDACEEPROM   = 0x60
 
-from smbus import SMBus
+from smbus2 import SMBus
 
 class MCP4725(object):
     """Base functionality for MCP4725 digital to analog converter."""
@@ -27,9 +27,9 @@ class MCP4725(object):
             value = 4095
         if value < 0:
             value = 0
-            
+        
         reg_data = [(value >> 4) & 0xFF, (value << 4) & 0xFF]
-        print(reg_data)
+        
         if persist:
             self._device.write_block_data(self._address, WRITEDACEEPROM, reg_data)
         else:

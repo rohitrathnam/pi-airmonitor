@@ -33,8 +33,8 @@ spi.open(0, 1)
 spi.max_speed_hz = 100000
 spi.mode = 0b00
 
-hv = MCP4725.MCP4725(address=0x60, busnum=1)
-sv = MCP4725.MCP4725(address=0x61, busnum=1)
+hv = MCP4725.MCP4725(address=0x60)
+sv = MCP4725.MCP4725(address=0x61)
 bme = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 #pm = pmsensor.Honeywell()
 #adxl = adxl345.ADXL345()
@@ -52,14 +52,14 @@ def set_sv(volt):
 		while i<val:
 			sv.set_voltage(i, False)
 			i = i + 1
-			sleep(0.001)
+			sleep(0.01)
 		sv.set_voltage(val, False)
 	elif val < sval:
 		i = sval
 		while i>val:
 			sv.set_voltage(i, False)
 			i = i - 1
-			sleep(0.001)
+			sleep(0.01)
 		sv.set_voltage(val, False)
 	sval = val
 	#set_sv_node(node1, volt)
@@ -178,7 +178,6 @@ def status():
 def settings():
 	return render_template("form.html")
 
-
 @app.route('/change',methods = ['POST', 'GET'])
 def change():
 	if request.method == 'POST':
@@ -193,7 +192,7 @@ def webserver():
 	print("Flask init success")
 	app.run(host='0.0.0.0', port=80, debug=False)
 
-'''
+
 if __name__ == '__main__':
 	#webserver()
 	
@@ -244,4 +243,3 @@ if __name__ == '__main__':
 		spi.close()
 		node1.close()
 		node2.close()
-'''
