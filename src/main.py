@@ -30,7 +30,7 @@ global settings_flag
 settings_flag = 0
 
 spi = spidev.SpiDev()
-spi.open(0, 1)
+spi.open(0, 0)
 spi.max_speed_hz = 100000
 spi.mode = 0b00
 
