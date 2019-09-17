@@ -15,4 +15,6 @@ To update system time into RTC use hwclock -w
 To execute,
 sudo ./run.sh
 
+Device settings at localhost/status
+
 For more details on time check https://www.raspberrypi.org/forums/viewtopic.php?t=161133
