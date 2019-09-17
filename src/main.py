@@ -9,6 +9,7 @@ import adxl345
 import honeywell_hpma115s0 as pmsensor
 import ads1115
 import serial
+from influxdb import InfluxDBClient
 
 from flask import Flask, render_template, request
 app = Flask(__name__)
@@ -42,6 +43,8 @@ ads = ads1115.ADS1115()
 
 node1 = serial.Serial(port='/dev/rfcomm0', baudrate=9600, timeout=8)
 node2 = serial.Serial(port='/dev/rfcomm1', baudrate=9600, timeout=8)
+
+db = InfluxDBClient(database='log')
 
 def set_sv(volt):
 	global sv
@@ -117,6 +120,31 @@ def log_db(gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, n
 		cur.execute("INSERT INTO log (gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, n1_gas, n1_temp, n1_hum, n2_gas, n2_temp, n2_hum) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, n1_gas, n1_temp, n1_hum, n2_gas, n2_temp, n2_hum))
 		con.commit()
 
+def log_idb(gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, n1_gas, n1_temp, n1_hum, n2_gas, n2_temp, n2_hum):
+	json = [
+		{
+		"measurement":"airmonitor",
+		"fields":{
+		"gas":gas,
+		"gas_raw":gas_raw, 
+		"mux":mux, 
+		"temp":temp, 
+		"hum":hum, 
+		"pm25":pm25, 
+		"pm10":pm10, 
+		"acc_x":acc_x, 
+		"acc_y":acc_y, 
+		"acc_z":acc_z, 
+		"ldr":ldr, 
+		"n1_gas":n1_gas, 
+		"n1_temp":n1_temp, 
+		"n1_hum":n1_hum, 
+		"n2_gas":n2_gas, 
+		"n2_temp":n2_temp, 
+		"n2_hum":n2_hum
+		}}]
+	db.write_points(json)
+
 def set_mux(config):
 	if config==0:
 		pi.write(MUX0,0)
@@ -160,6 +188,7 @@ def set_sv_node(node, sv):
 	#node.close()
 	print('node '+str(name)+str(sv))
 
+'''
 @app.route('/')
 def home():
 	con = sql.connect("log.db")
@@ -169,10 +198,11 @@ def home():
 		for row in cur:
 			print("served ", row)
 	return render_template('home.html', rows=row)
+'''
 
 @app.route('/status')
 def status():
-	return render_template("status.html",rows = [sval, hval])
+	return render_template("status.html",rows = [sval*gain*3.3/4096, hval*gain*3.3/4096])
 
 @app.route('/settings')
 def settings():
@@ -183,7 +213,6 @@ def change():
 	if request.method == 'POST':
 		new_sv = int(request.form['sv'])
 		new_hv = int(request.form['hv'])
-		state = request.form['state']
 		global settings_flag
 		settings_flag = 1
 	return "<completed>"
@@ -236,7 +265,8 @@ if __name__ == '__main__':
 			print("node1 ", n1)
 			n2 = read_node(node2)
 			print("node2 ", n2)
-			log_db(sensor_cur, raw_adc, mux, temp, hum, pm_data.pm25, pm_data.pm10, acc['x'], acc['y'], acc['z'], ldr, n1[0], n1[1], n1[2], n2[0], n2[1], n2[2])
+			log_idb(sensor_cur, raw_adc, mux, temp, hum, pm_data.pm25, pm_data.pm10, acc['x'], acc['y'], acc['z'], ldr, n1[0], n1[1], n1[2], n2[0], n2[1], n2[2])
+			#use log_db function for sqlite debug db
 
 	except KeyboardInterrupt:
 		print("exit")
