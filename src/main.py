@@ -11,7 +11,7 @@ import ads1115
 import serial
 from influxdb import InfluxDBClient
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 import threading
 
@@ -210,12 +210,15 @@ def settings():
 
 @app.route('/change',methods = ['POST', 'GET'])
 def change():
+	global new_sv
+	global new_hv
 	if request.method == 'POST':
-		new_sv = int(request.form['sv'])
-		new_hv = int(request.form['hv'])
+		new_sv = float(request.form['sv'])
+		new_hv = float(request.form['hv'])
 		global settings_flag
 		settings_flag = 1
-	return "<completed>"
+		sleep(1)
+	return redirect(url_for('status'))
 
 def webserver():
 	print("Flask init success")
@@ -237,12 +240,12 @@ if __name__ == '__main__':
 	set_mux(mux)
 	set_sv(4.3)
 	set_hv(5.9)
-	
+
 	try:
 		while True:
 			if settings_flag==1:
-				set_sv(new_sv)
-				set_hv(new_hv)
+				set_sv(round(new_sv,1))
+				set_hv(round(new_hv,1))
 				settings_flag = 0
 			[raw_adc, sensor_cur] = read_adc()
 			[temp, hum] = read_bme()
