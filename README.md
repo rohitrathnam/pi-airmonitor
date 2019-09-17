@@ -12,4 +12,7 @@ dtoverlay=i2c-rtc,ds3231
 Update your system time using ntpdate
 To update system time into RTC use hwclock -w
 
+To execute,
+sudo ./run.sh
+
 For more details on time check https://www.raspberrypi.org/forums/viewtopic.php?t=161133
