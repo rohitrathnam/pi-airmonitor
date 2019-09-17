@@ -10,11 +10,13 @@ For RTC, edit /boot/config.txt and add the following to last line:
 dtoverlay=i2c-rtc,ds3231
 
 Update your system time using ntpdate
+<br>
 To update system time into RTC use hwclock -w
 
 To execute,
 sudo ./run.sh
 
 Device settings at localhost/status
+Grafana at localhost:3000
 
 For more details on time check https://www.raspberrypi.org/forums/viewtopic.php?t=161133
