@@ -19,5 +19,5 @@ pip3 install flask
 pip3 install Adafruit_PureIO
 
 echo "Setup successful"
-echo "Run src/main.py to log the data in src/log.db"
+echo "Run sudo ./run.sh"
 echo "Follow https://www.raspberrypi.org/forums/viewtopic.php?p=1007463#p1007463 for bluetooth problems"
