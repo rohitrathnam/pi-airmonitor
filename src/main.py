@@ -130,7 +130,7 @@ def log_idb(gas, gas_raw, mux, temp, hum, pm25, pm10, acc_x, acc_y, acc_z, ldr, 
 		"mux":mux, 
 		"temp":temp, 
 		"hum":hum, 
-		"pm25":pm25, 
+		"pm2p5":pm25, 
 		"pm10":pm10, 
 		"acc_x":acc_x, 
 		"acc_y":acc_y, 
@@ -202,7 +202,7 @@ def home():
 
 @app.route('/status')
 def status():
-	return render_template("status.html",rows = [sval*gain*3.3/4096, hval*gain*3.3/4096])
+	return render_template("status.html",rows = [round(sval*gain*3.3/4096,1), round(hval*gain*3.3/4096,1)])
 
 @app.route('/settings')
 def settings():
