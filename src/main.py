@@ -227,11 +227,12 @@ def webserver():
 
 if __name__ == '__main__':
 	#webserver()
-	
+
 	if node1.isOpen():
 		node1.close()
 	if node2.isOpen():
 		node2.close()
+
 	web = threading.Thread(target=webserver)
 	web.daemon = True
 	web.start()
